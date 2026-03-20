@@ -75,58 +75,157 @@ mtd convert doc.md -o doc.docx --theme path/to/my-theme.yaml
 
 ## Markdown Template
 
-mtd extends standard Markdown with special blocks for document generation.
+mtd extends standard Markdown with special blocks for professional document generation. A complete example is available in [examples/template.md](examples/template.md).
 
-### Frontmatter
+### Full Example
 
-YAML frontmatter controls document metadata, theme, and page layout:
-
-```yaml
+```markdown
 ---
-title: My Report
+title: Quarterly Report
 subtitle: Q1 2026 Results
 author: Jane Doe
 date: 2026-03-20
 theme: modern
 header:
-  left: "My Report"
+  left: "Quarterly Report"
+  center: ""
   right: "{page}"
 footer:
   left: "Jane Doe"
+  center: "Confidential"
   right: "{date}"
 ---
+
+:::titlepage
+# Quarterly Report
+## Q1 2026 Results
+Jane Doe
+ACME Corp.
+March 2026
+:::
+
+# Introduction
+
+Document content starts here...
 ```
 
-Available placeholders for headers/footers: `{page}` (page number), `{date}` (document date), `{title}` (document title).
+### Frontmatter Reference
 
-### Title Page
+The YAML frontmatter block (`---`) at the top of the file controls all document metadata and layout.
 
-Use the `:::titlepage` block to generate a cover page with centered, large text. This page is rendered separately before the document content, with no header/footer.
+| Field | Type | Description |
+|-------|------|-------------|
+| `title` | string | Document title (used in metadata and `{title}` placeholder) |
+| `subtitle` | string | Subtitle (displayed on title page) |
+| `author` | string | Author name (used in metadata and `{author}` placeholder) |
+| `date` | string | Date in `YYYY-MM-DD` format (used in metadata and `{date}` placeholder) |
+| `theme` | string | Theme name or path to a `.yaml` file. Defaults to `default` |
+| `header` | object | Header configuration (see below) |
+| `footer` | object | Footer configuration (see below) |
+
+#### Headers and Footers
+
+Headers and footers support three zones: `left`, `center`, and `right`. Each zone is optional and defaults to empty.
+
+```yaml
+header:
+  left: "Company Name"
+  center: ""
+  right: "{page}"
+footer:
+  left: "{author}"
+  center: "Draft"
+  right: "{date}"
+```
+
+**Available placeholders:**
+
+| Placeholder | Replaced with |
+|-------------|---------------|
+| `{page}` | Current page number (auto-incremented) |
+| `{date}` | Document date from frontmatter |
+| `{title}` | Document title from frontmatter |
+
+Headers and footers are repeated on every page. When a title page is present, it is excluded from headers/footers automatically.
+
+### Title Page Block
+
+The `:::titlepage` block generates a dedicated cover page before the document content. Content inside the block is centered with larger fonts.
 
 ```markdown
 :::titlepage
-# My Report
-## Q1 2026 Results
-Jane Doe
-March 2026
+# Main Title
+## Subtitle
+Author Name
+Organization
+Date or other info
 :::
 ```
 
-### Supported Markdown Features
+**Rendering rules:**
 
-mtd supports all common Markdown elements:
+| Element | Style |
+|---------|-------|
+| `# Heading 1` | Large bold title (28pt by default, configurable via theme) |
+| `## Heading 2` | Subtitle (20pt by default) |
+| Plain text | Info lines (14pt by default, centered) |
 
-- Headings (H1 to H6)
-- **Bold**, *italic*, ~~strikethrough~~, `inline code`
-- Ordered and unordered lists (with nesting)
-- Fenced code blocks with syntax highlighting
-- Tables
-- Blockquotes
-- Links and images
-- Horizontal rules
-- Footnotes
+The title page sizes are controlled by the theme:
 
-See [examples/template.md](examples/template.md) for a complete sample.
+```yaml
+titlepage:
+  title_size: 28      # H1 font size in pt
+  subtitle_size: 20   # H2 font size in pt
+  info_size: 14       # Plain text font size in pt
+  spacing_top: "7cm"  # Top margin before content
+```
+
+A page break is automatically inserted after the title page.
+
+### Supported Markdown Elements
+
+| Element | Syntax | DOCX | ODT |
+|---------|--------|:----:|:---:|
+| Headings | `# H1` to `###### H6` | Yes | Yes |
+| Bold | `**text**` | Yes | Yes |
+| Italic | `*text*` | Yes | Yes |
+| Bold + Italic | `***text***` | Yes | Yes |
+| Strikethrough | `~~text~~` | Yes | Yes |
+| Inline code | `` `code` `` | Yes | Yes |
+| Fenced code blocks | ` ```python ` | Yes | Yes |
+| Unordered lists | `- item` (supports nesting) | Yes | Yes |
+| Ordered lists | `1. item` (supports nesting) | Yes | Yes |
+| Task lists | `- [x] done` / `- [ ] todo` | Yes | Yes |
+| Tables | Pipe syntax with alignment | Yes | Yes |
+| Blockquotes | `> quote` (supports nesting) | Yes | Yes |
+| Links | `[text](url)` | Yes | Yes |
+| Images | `![alt](url)` | Yes | Yes |
+| Horizontal rules | `---` | Yes | Yes |
+| Footnotes | `text[^1]` / `[^1]: note` | Yes | Yes |
+
+### Minimal Template
+
+The simplest valid mtd document:
+
+```markdown
+---
+title: My Document
+author: Your Name
+---
+
+# Hello World
+
+This is a paragraph.
+```
+
+### Full-Featured Template
+
+For a production-ready template with all features, copy the example:
+
+```bash
+cp examples/template.md my-document.md
+mtd convert my-document.md -o my-document.docx --theme academic
+```
 
 ## License
 
