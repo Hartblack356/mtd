@@ -5,10 +5,14 @@ and the __main__.py entry point via subprocess.
 """
 
 import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
 from mtd.themes.engine import Theme
+
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 # ===========================================================================
 # __main__.py (lines 1-3) -- entry point via subprocess
@@ -18,10 +22,10 @@ from mtd.themes.engine import Theme
 def test_main_module_version():
     """Running python -m mtd --version should print the version string."""
     result = subprocess.run(
-        ["uv", "run", "python", "-m", "mtd", "--version"],
+        [sys.executable, "-m", "mtd", "--version"],
         capture_output=True,
         text=True,
-        cwd="/home/dwi/Documents/github.com/Dxsk/mtd",
+        cwd=str(_PROJECT_ROOT),
     )
     assert result.returncode == 0
     assert "0.1.0" in result.stdout
