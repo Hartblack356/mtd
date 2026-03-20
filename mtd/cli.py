@@ -141,7 +141,7 @@ def serve(host, port):
         import uvicorn
     except ImportError:
         click.echo(
-            "Error: API dependencies not installed. Install with: pip install mtd[api]",
+            "Error: API dependencies not installed. Install with: pip install yamtd[api]",
             err=True,
         )
         sys.exit(1)

@@ -29,7 +29,7 @@ Convert your Markdown files to **DOCX** and **ODT** with custom themes. Availabl
 uv tool install yamtd
 
 # With the HTTP API included
-uv tool install "mtd[api]"
+uv tool install "yamtd[api]"
 
 # With pipx
 pipx install yamtd
@@ -159,7 +159,7 @@ mtd includes an optional HTTP API server for integration with other systems.
 ### Install
 
 ```bash
-pip install yamtd[api]
+pip install "yamtd[api]"
 ```
 
 ### Start the Server

@@ -74,13 +74,68 @@ jobs:
           else COLOR="red"; fi
           curl -s "https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR}" -o coverage.svg
 
-      - name: Commit coverage badge
+      - name: Update changelog
+        if: matrix.python-version == '3.14' && github.ref == 'refs/heads/main'
+        run: |
+          # Get the last changelog update commit or fall back to first commit
+          LAST_CHANGELOG=$(git log --all --oneline --grep="ci: update changelog" -1 --format="%H" 2>/dev/null || true)
+          if [ -z "$LAST_CHANGELOG" ]; then
+            LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || true)
+            if [ -n "$LAST_TAG" ]; then
+              SINCE="$LAST_TAG"
+            else
+              SINCE=$(git rev-list --max-parents=0 HEAD)
+            fi
+          else
+            SINCE="$LAST_CHANGELOG"
+          fi
+
+          # Collect commits since last update (exclude CI commits)
+          FEATS=$(git log "$SINCE"..HEAD --pretty=format:"%s" --grep="^feat" | grep -v "\[skip ci\]" || true)
+          FIXES=$(git log "$SINCE"..HEAD --pretty=format:"%s" --grep="^fix" | grep -v "\[skip ci\]" || true)
+          OTHERS=$(git log "$SINCE"..HEAD --pretty=format:"%s" --grep="^feat" --grep="^fix" --grep="^ci:" --grep="^Merge" --invert-grep | grep -v "\[skip ci\]" || true)
+
+          # Build new entries for [Unreleased]
+          ENTRY=""
+          if [ -n "$FEATS" ]; then
+            ENTRY+=$'\n'"### Added"$'\n'
+            ENTRY+=$(echo "$FEATS" | sed 's/^feat: //' | sed 's/^feat(//' | sed 's/): /: /' | sed 's/^/- /')$'\n'
+          fi
+          if [ -n "$FIXES" ]; then
+            ENTRY+=$'\n'"### Fixed"$'\n'
+            ENTRY+=$(echo "$FIXES" | sed 's/^fix: //' | sed 's/^fix(//' | sed 's/): /: /' | sed 's/^/- /')$'\n'
+          fi
+          if [ -n "$OTHERS" ]; then
+            ENTRY+=$'\n'"### Changed"$'\n'
+            ENTRY+=$(echo "$OTHERS" | sed 's/^docs: //' | sed 's/^refactor: //' | sed 's/^/- /')$'\n'
+          fi
+
+          if [ -n "$ENTRY" ]; then
+            # Replace [Unreleased] section content
+            python3 -c "
+          import re
+          with open('CHANGELOG.md', 'r') as f:
+              content = f.read()
+          # Remove old unreleased content (between [Unreleased] and next ## or EOF)
+          content = re.sub(
+              r'(## \[Unreleased\])\n.*?(?=\n## \[|$)',
+              r'\1\n${ENTRY}\n',
+              content,
+              count=1,
+              flags=re.DOTALL
+          )
+          with open('CHANGELOG.md', 'w') as f:
+              f.write(content)
+          "
+          fi
+
+      - name: Commit CI artifacts
         if: matrix.python-version == '3.14' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add coverage.svg
-          git diff --staged --quiet || git commit -m "ci: update coverage badge [skip ci]"
+          git add coverage.svg CHANGELOG.md
+          git diff --staged --quiet || git commit -m "ci: update changelog and coverage badge [skip ci]"
           git push
 
   security:

@@ -39,49 +39,48 @@ jobs:
         env:
           UV_PUBLISH_URL: https://upload.pypi.org/legacy/
 
-      - name: Generate changelog
+      - name: Freeze changelog for release
         id: changelog
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           DATE=$(date +%Y-%m-%d)
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)
-          echo "Previous tag: $PREV_TAG"
 
-          # Build the changelog entry
-          ENTRY="## [$VERSION] - $DATE"$'\n'
+          # Extract current [Unreleased] content for the GitHub release body
+          UNRELEASED=$(sed -n '/^## \[Unreleased\]/,/^## \[/{ /^## \[/!p; }' CHANGELOG.md | sed '/^$/d')
 
-          FEATS=$(git log "$PREV_TAG"..HEAD --pretty=format:"%s" --grep="^feat" || true)
-          if [ -n "$FEATS" ]; then
-            ENTRY+=$'\n'"### Added"$'\n'
-            ENTRY+=$(echo "$FEATS" | sed 's/^feat: //' | sed 's/^/- /')$'\n'
-          fi
+          # Replace [Unreleased] header content with versioned header
+          # Keep [Unreleased] empty and add the versioned section below it
+          python3 -c "
+          import re
+          with open('CHANGELOG.md', 'r') as f:
+              content = f.read()
+          # Replace [Unreleased] section: keep header, move content to versioned section
+          content = re.sub(
+              r'(## \[Unreleased\])\n(.*?)(?=\n## \[|\Z)',
+              r'\1\n\n## [$VERSION] - $DATE\n\2',
+              content,
+              count=1,
+              flags=re.DOTALL
+          )
+          with open('CHANGELOG.md', 'w') as f:
+              f.write(content)
+          "
 
-          FIXES=$(git log "$PREV_TAG"..HEAD --pretty=format:"%s" --grep="^fix" || true)
-          if [ -n "$FIXES" ]; then
-            ENTRY+=$'\n'"### Fixed"$'\n'
-            ENTRY+=$(echo "$FIXES" | sed 's/^fix: //' | sed 's/^/- /')$'\n'
-          fi
-
-          OTHERS=$(git log "$PREV_TAG"..HEAD --pretty=format:"%s" --grep="^feat" --grep="^fix" --invert-grep || true)
-          if [ -n "$OTHERS" ]; then
-            ENTRY+=$'\n'"### Changed"$'\n'
-            ENTRY+=$(echo "$OTHERS" | sed 's/^/- /')$'\n'
-          fi
-
-          # Insert entry into CHANGELOG.md after [Unreleased]
-          sed -i "/^## \[Unreleased\]/a\\\\n${ENTRY}" CHANGELOG.md
-
-          # Commit and push updated CHANGELOG.md
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
-          git commit -m "docs: update CHANGELOG for $VERSION [skip ci]"
+          git diff --staged --quiet || git commit -m "docs: freeze CHANGELOG for $VERSION [skip ci]"
           git push origin HEAD:main
 
           # Build release body
           {
             echo 'changelog<<EOF'
-            echo "$ENTRY"
+            if [ -n "$UNRELEASED" ]; then
+              echo "$UNRELEASED"
+            else
+              echo "Release $VERSION"
+            fi
             echo ""
             echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ github.ref_name }}"
             echo 'EOF'
