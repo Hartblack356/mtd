@@ -30,36 +30,17 @@ def cli():
 )
 def convert(input_file, output, theme):
     """Convert a Markdown file to DOCX or ODT."""
-    from mtd.parser import parse_markdown
-    from mtd.themes.engine import load_theme
-    from mtd.writers.docx_writer import write_docx
-    from mtd.writers.odt_writer import write_odt
+    from mtd.api import convert as mtd_convert
 
-    # Parse input
     input_path = Path(input_file)
-    doc = parse_markdown(input_path)
-
-    # Resolve output path
     if output is None:
         output = input_path.with_suffix(".docx")
     output_path = Path(output)
 
-    # Resolve theme (CLI flag > frontmatter > default)
-    theme_name = theme or doc.theme or "default"
     try:
-        resolved_theme = load_theme(theme_name)
-    except FileNotFoundError as e:
+        result = mtd_convert(input_path, output_path, theme=theme)
+    except (ValueError, FileNotFoundError) as e:
         click.echo(f"Error: {e}", err=True)
-        sys.exit(1)
-
-    # Choose writer based on output extension
-    ext = output_path.suffix.lower()
-    if ext == ".docx":
-        result = write_docx(doc, output_path, resolved_theme)
-    elif ext == ".odt":
-        result = write_odt(doc, output_path, resolved_theme)
-    else:
-        click.echo(f"Error: unsupported output format '{ext}'. Use .docx or .odt.", err=True)
         sys.exit(1)
 
     click.echo(f"Created {result}")
@@ -108,3 +89,35 @@ def themes_show(name):
     click.echo(f"Body: {t.body_size}pt, {t.line_spacing}x spacing")
     margins = f"{t.margin_top}/{t.margin_bottom}/{t.margin_left}/{t.margin_right}"
     click.echo(f"Page: {t.page_size}, margins {margins}")
+
+
+@cli.command()
+@click.option(
+    "-h",
+    "--host",
+    default="127.0.0.1",
+    show_default=True,
+    help="Host to bind to. Use 127.0.0.1 for local only.",
+)
+@click.option(
+    "-p",
+    "--port",
+    default=8484,
+    show_default=True,
+    help="Port to listen on.",
+)
+def serve(host, port):
+    """Start the HTTP API server (local/internal use only)."""
+    try:
+        import uvicorn
+    except ImportError:
+        click.echo(
+            "Error: API dependencies not installed. Install with: pip install mtd[api]",
+            err=True,
+        )
+        sys.exit(1)
+
+    click.echo(f"Starting mtd API server on http://{host}:{port}")
+    click.echo("WARNING: For local/internal use only. Do not expose to the internet.")
+    click.echo(f"API docs available at http://{host}:{port}/docs")
+    uvicorn.run("mtd.server:app", host=host, port=port)

@@ -1,7 +1,7 @@
 [project]
 name = "mtd"
 version = "0.1.0"
-description = "Yet another Markdown to Documents converter, lightweight and themeable."
+description = "Lightweight, themeable Markdown to Documents converter. CLI, SDK, and API."
 readme = "README.md"
 requires-python = ">=3.14"
 license = "MIT"
@@ -17,6 +17,13 @@ dependencies = [
 [project.scripts]
 mtd = "mtd.cli:cli"
 
+[project.optional-dependencies]
+api = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+    "python-multipart>=0.0.20",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
@@ -31,10 +38,24 @@ dev = [
     "types-Markdown>=3.5",
     "bandit>=1.8",
     "pip-audit>=2.7",
+    "pytest-cov>=6.0",
 ]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["mtd"]
+omit = ["mtd/server.py"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 90
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__",
+    "if TYPE_CHECKING",
+]
 
 [tool.ruff]
 target-version = "py313"

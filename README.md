@@ -1,8 +1,14 @@
 # mtd
 
-Yet another Markdown to Documents converter. Lightweight and themeable.
+[![CI](https://github.com/Dxsk/mtd/actions/workflows/ci.yml/badge.svg)](https://github.com/Dxsk/mtd/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Dxsk/mtd/graph/badge.svg)](https://codecov.io/gh/Dxsk/mtd)
+[![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-Convert your Markdown files to **DOCX** and **ODT** with custom themes, in a single command.
+Yet another Markdown to Documents converter. Lightweight, themeable, and API-ready.
+
+Convert your Markdown files to **DOCX** and **ODT** with custom themes. Available as a CLI tool, a Python SDK, or a local HTTP microservice for integration with other systems.
 
 ## Features
 
@@ -10,8 +16,11 @@ Convert your Markdown files to **DOCX** and **ODT** with custom themes, in a sin
 - 🎨 Built-in themes: `default`, `academic`, `modern`
 - 🧩 Custom themes via simple YAML files
 - 📝 YAML frontmatter support (title, author, date, theme)
+- 📑 Title page and headers/footers support
+- 🐍 Python SDK for programmatic use
+- 🌐 HTTP API microservice (FastAPI) for system integration
 - ⚡ Fast and lightweight with minimal dependencies
-- 🛠️ Simple CLI interface
+- 🛠️ CLI, SDK, and API: three ways to use it
 
 ## Install
 
@@ -37,6 +46,150 @@ mtd themes list
 
 # Show theme details
 mtd themes show academic
+```
+
+## SDK / Python API
+
+Use mtd as a library in your own Python projects.
+
+### Install
+
+```bash
+pip install mtd
+```
+
+### Quick Convert
+
+```python
+from mtd import convert
+
+# Markdown file to DOCX
+convert("report.md", "report.docx")
+
+# With a theme
+convert("report.md", "report.docx", theme="academic")
+
+# To ODT
+convert("report.md", "report.odt", theme="modern")
+```
+
+### Convert from String
+
+```python
+from mtd import convert_string
+
+markdown = """
+---
+title: Generated Report
+author: Automation Bot
+---
+
+# Results
+
+Processing completed successfully.
+"""
+
+convert_string(markdown, "report.docx", theme="modern")
+```
+
+### Granular API
+
+For more control, use the lower-level functions:
+
+```python
+from mtd import parse_markdown, write_docx, write_odt, load_theme, Document
+
+# Parse
+doc = parse_markdown("report.md")
+print(doc.title)       # from frontmatter
+print(doc.author)
+print(doc.theme)       # "default" if not set
+print(doc.titlepage)   # HTML of titlepage block, or None
+print(doc.header)      # header config dict, or None
+print(doc.footer)      # footer config dict, or None
+
+# Load a theme
+theme = load_theme("academic")
+# Or from a custom YAML file
+theme = load_theme("path/to/custom.yaml")
+
+# Write to DOCX
+write_docx(doc, "output.docx", theme)
+
+# Write to ODT
+write_odt(doc, "output.odt", theme)
+```
+
+### Available Exports
+
+| Import | Description |
+|--------|-------------|
+| `convert(input, output, theme=)` | High-level one-liner conversion |
+| `convert_string(markdown, output, theme=)` | Convert from a Markdown string |
+| `parse_markdown(source)` | Parse a file or string into a Document |
+| `Document` | Parsed document dataclass |
+| `write_docx(doc, output, theme=)` | Write Document to DOCX |
+| `write_odt(doc, output, theme=)` | Write Document to ODT |
+| `load_theme(name_or_path)` | Load a theme by name or YAML path |
+| `list_themes()` | List available built-in theme names |
+| `Theme` | Theme configuration dataclass |
+
+## HTTP API
+
+mtd includes an optional HTTP API server for integration with other systems.
+
+> **WARNING**: This API is for local/internal use only. It has no authentication or security hardening. Do not expose it to the public internet. Use it behind a reverse proxy or within a private network.
+
+### Install
+
+```bash
+pip install mtd[api]
+```
+
+### Start the Server
+
+```bash
+# Via CLI
+mtd serve --port 8484
+
+# Or directly with uvicorn
+uvicorn mtd.server:app --host 127.0.0.1 --port 8484
+```
+
+API documentation is available at `http://127.0.0.1:8484/docs` (Swagger UI).
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/health` | Health check |
+| `GET` | `/themes` | List available themes |
+| `GET` | `/themes/{name}` | Get theme details |
+| `POST` | `/convert` | Convert Markdown text (form data) |
+| `POST` | `/convert/file` | Convert uploaded Markdown file |
+
+### Examples
+
+```bash
+# Health check
+curl http://127.0.0.1:8484/health
+
+# List themes
+curl http://127.0.0.1:8484/themes
+
+# Convert Markdown text to DOCX
+curl -X POST http://127.0.0.1:8484/convert \
+  -F "markdown=# Hello World" \
+  -F "format=docx" \
+  -F "theme=modern" \
+  -o output.docx
+
+# Upload and convert a file
+curl -X POST http://127.0.0.1:8484/convert/file \
+  -F "file=@document.md" \
+  -F "format=odt" \
+  -F "theme=academic" \
+  -o output.odt
 ```
 
 ## Themes
