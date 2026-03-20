@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from html.parser import HTMLParser
 from pathlib import Path
+from typing import Any
 
 from odf.opendocument import OpenDocumentText
 from odf.style import (
@@ -450,15 +451,15 @@ class _OdtHTMLParser(HTMLParser):
     def __init__(self, odt_doc: OpenDocumentText) -> None:
         super().__init__(convert_charrefs=True)
         self._doc = odt_doc
-        self._body = odt_doc.text
+        self._body: Any = odt_doc.text
 
         # Stack of open HTML tags
         self._tag_stack: list[str] = []
 
         # Current ODT block element (P or H) where inline content is appended
-        self._current_block: object | None = None
+        self._current_block: Any = None
         # Current inline container (Span or block itself)
-        self._current_inline: object | None = None
+        self._current_inline: Any = None
 
         # Inline formatting counters (allow nesting)
         self._bold: int = 0

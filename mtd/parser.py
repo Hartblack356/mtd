@@ -64,7 +64,9 @@ def _split_frontmatter(text: str) -> tuple[dict, str]:
     return metadata, body
 
 
-def _extract_titlepage(body: str, md_instance: markdown.Markdown) -> tuple[str | None, str]:
+def _extract_titlepage(
+    body: str, md_instance: markdown.Markdown | None = None
+) -> tuple[str | None, str]:
     """Extract :::titlepage ... ::: block from body text.
 
     Returns (titlepage_html, body_without_titlepage).

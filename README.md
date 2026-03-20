@@ -73,20 +73,60 @@ Then use it:
 mtd convert doc.md -o doc.docx --theme path/to/my-theme.yaml
 ```
 
-## Frontmatter
+## Markdown Template
 
-Add YAML frontmatter to your Markdown files:
+mtd extends standard Markdown with special blocks for document generation.
 
-```markdown
+### Frontmatter
+
+YAML frontmatter controls document metadata, theme, and page layout:
+
+```yaml
 ---
-title: My Document
+title: My Report
+subtitle: Q1 2026 Results
 author: Jane Doe
 date: 2026-03-20
 theme: modern
+header:
+  left: "My Report"
+  right: "{page}"
+footer:
+  left: "Jane Doe"
+  right: "{date}"
 ---
-
-# Content starts here
 ```
+
+Available placeholders for headers/footers: `{page}` (page number), `{date}` (document date), `{title}` (document title).
+
+### Title Page
+
+Use the `:::titlepage` block to generate a cover page with centered, large text. This page is rendered separately before the document content, with no header/footer.
+
+```markdown
+:::titlepage
+# My Report
+## Q1 2026 Results
+Jane Doe
+March 2026
+:::
+```
+
+### Supported Markdown Features
+
+mtd supports all common Markdown elements:
+
+- Headings (H1 to H6)
+- **Bold**, *italic*, ~~strikethrough~~, `inline code`
+- Ordered and unordered lists (with nesting)
+- Fenced code blocks with syntax highlighting
+- Tables
+- Blockquotes
+- Links and images
+- Horizontal rules
+- Footnotes
+
+See [examples/template.md](examples/template.md) for a complete sample.
 
 ## License
 

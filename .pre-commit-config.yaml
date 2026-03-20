@@ -16,3 +16,14 @@ repos:
       - id: ruff
         args: [--fix]
       - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - types-PyYAML>=6.0
+          - types-Markdown>=3.5
+        args: [--ignore-missing-imports]
+        pass_filenames: false
+        entry: mypy mtd/

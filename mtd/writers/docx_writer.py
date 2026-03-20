@@ -2,6 +2,7 @@
 
 from html.parser import HTMLParser
 from pathlib import Path
+from typing import Any
 
 from docx import Document as DocxDocument
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK, WD_TAB_ALIGNMENT
@@ -135,9 +136,7 @@ def _build_hf_paragraph(
 class _DocxHTMLParser(HTMLParser):
     """Walk an HTML string and populate a python-docx Document."""
 
-    def __init__(
-        self, docx: DocxDocument, titlepage_mode: bool = False, theme: Theme | None = None
-    ) -> None:
+    def __init__(self, docx: Any, titlepage_mode: bool = False, theme: Theme | None = None) -> None:
         super().__init__(convert_charrefs=True)
         self._docx = docx
         self._titlepage_mode = titlepage_mode
@@ -154,7 +153,7 @@ class _DocxHTMLParser(HTMLParser):
         self._strike: int = 0
 
         # Current paragraph being built; None means we need to create one
-        self._current_para = None
+        self._current_para: Any = None
         self._para_style: str | None = None  # deferred style for next para
 
         # Pre / code block tracking
@@ -227,7 +226,7 @@ class _DocxHTMLParser(HTMLParser):
         self._current_para._mtd_tp_size = size
         self._current_para._mtd_tp_bold = bold
 
-    def _add_run(self, text: str) -> None:
+    def _add_run(self, text: str) -> Any:
         """Append a formatted run to the current paragraph."""
         if not text:
             return
@@ -492,7 +491,7 @@ class _DocxHTMLParser(HTMLParser):
 # ---------------------------------------------------------------------------
 
 
-def _apply_heading_styles(docx: DocxDocument, theme: Theme) -> None:
+def _apply_heading_styles(docx: Any, theme: Theme) -> None:
     """Apply theme heading styles to the document's built-in Heading styles."""
     heading_styles = {
         1: theme.h1,
@@ -637,14 +636,14 @@ def write_docx(document: Document, output: str | Path, theme: Theme | None = Non
         # First page should not show header/footer
         section.different_first_page_header_footer = True
 
-    if has_header:
+    if has_header and document.header is not None:
         _setup_header(section, document.header, date_str, title_str)
 
-    if has_footer:
+    if has_footer and document.footer is not None:
         _setup_footer(section, document.footer, date_str, title_str)
 
     # Render titlepage content first
-    if has_titlepage:
+    if has_titlepage and document.titlepage is not None:
         tp_parser = _DocxHTMLParser(docx, titlepage_mode=True, theme=theme)
         tp_parser.feed(document.titlepage)
         # Add a page break after the titlepage using a run-level break
