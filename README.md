@@ -26,19 +26,22 @@ Convert your Markdown files to **DOCX** and **ODT** with custom themes. Availabl
 
 ```bash
 # Global install with uv (recommended)
-uv tool install mtd
+uv tool install yamtd
 
 # With the HTTP API included
 uv tool install "mtd[api]"
 
-# Or from the repo directly
-uv tool install git+https://github.com/Dxsk/mtd.git
-
 # With pipx
-pipx install mtd
+pipx install yamtd
 
 # With pip (in a venv)
-pip install mtd
+pip install yamtd
+```
+
+Or install directly from the repository:
+
+```bash
+uv tool install git+https://github.com/Dxsk/mtd.git
 ```
 
 ## Quick Start
@@ -68,7 +71,7 @@ Use mtd as a library in your own Python projects.
 ### Install
 
 ```bash
-pip install mtd
+pip install yamtd
 ```
 
 ### Quick Convert
@@ -156,7 +159,7 @@ mtd includes an optional HTTP API server for integration with other systems.
 ### Install
 
 ```bash
-pip install mtd[api]
+pip install yamtd[api]
 ```
 
 ### Start the Server

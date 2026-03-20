@@ -7,11 +7,13 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   release:
-    name: Create Release
+    name: Build, Publish & Release
     runs-on: ubuntu-latest
+    environment: pypi
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,20 +31,25 @@ jobs:
       - name: Run tests
         run: uv run pytest -v
 
+      - name: Build package
+        run: uv build
+
+      - name: Publish to PyPI
+        run: uv publish
+        env:
+          UV_PUBLISH_URL: https://upload.pypi.org/legacy/
+
       - name: Generate changelog
         id: changelog
         run: |
-          # Get the previous tag
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || git rev-list --max-parents=0 HEAD)
           echo "Previous tag: $PREV_TAG"
 
-          # Generate changelog from commits
           {
             echo 'changelog<<EOF'
             echo "## What's Changed"
             echo ""
 
-            # Features
             FEATS=$(git log "$PREV_TAG"..HEAD --pretty=format:"%s" --grep="^feat" || true)
             if [ -n "$FEATS" ]; then
               echo "### Features"
@@ -50,7 +57,6 @@ jobs:
               echo ""
             fi
 
-            # Fixes
             FIXES=$(git log "$PREV_TAG"..HEAD --pretty=format:"%s" --grep="^fix" || true)
             if [ -n "$FIXES" ]; then
               echo "### Bug Fixes"
@@ -58,7 +64,6 @@ jobs:
               echo ""
             fi
 
-            # Other changes
             OTHERS=$(git log "$PREV_TAG"..HEAD --pretty=format:"%s" --grep="^feat" --grep="^fix" --invert-grep || true)
             if [ -n "$OTHERS" ]; then
               echo "### Other Changes"
@@ -69,9 +74,6 @@ jobs:
             echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV_TAG...${{ github.ref_name }}"
             echo 'EOF'
           } >> "$GITHUB_OUTPUT"
-
-      - name: Build package
-        run: uv build
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
