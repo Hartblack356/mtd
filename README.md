@@ -25,16 +25,29 @@ Convert your Markdown files to **DOCX** and **ODT** with custom themes. Availabl
 ## Install
 
 ```bash
-# With uv (recommended)
-uv pip install mtd
+# Global install with uv (recommended)
+uv tool install mtd
 
-# With pip
+# With the HTTP API included
+uv tool install "mtd[api]"
+
+# Or from the repo directly
+uv tool install git+https://github.com/Dxsk/mtd.git
+
+# With pipx
+pipx install mtd
+
+# With pip (in a venv)
 pip install mtd
 ```
 
 ## Quick Start
 
 ```bash
+# Scaffold a template in the current directory
+mtd init
+mtd init -o my-report.md
+
 # Convert to DOCX
 mtd convert README.md -o output.docx
 
