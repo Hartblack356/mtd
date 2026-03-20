@@ -60,8 +60,18 @@ jobs:
       - name: Generate coverage badge
         if: matrix.python-version == '3.14' && github.ref == 'refs/heads/main'
         run: |
-          uv pip install coverage-badge
-          uv run coverage-badge -o coverage.svg -f
+          COVERAGE=$(uv run python -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('coverage.xml')
+          rate = float(tree.getroot().attrib['line-rate']) * 100
+          print(f'{rate:.0f}')
+          ")
+          if [ "$COVERAGE" -ge 90 ]; then COLOR="brightgreen"
+          elif [ "$COVERAGE" -ge 75 ]; then COLOR="green"
+          elif [ "$COVERAGE" -ge 60 ]; then COLOR="yellowgreen"
+          elif [ "$COVERAGE" -ge 40 ]; then COLOR="yellow"
+          else COLOR="red"; fi
+          curl -s "https://img.shields.io/badge/coverage-${COVERAGE}%25-${COLOR}" -o coverage.svg
 
       - name: Commit coverage badge
         if: matrix.python-version == '3.14' && github.ref == 'refs/heads/main'
