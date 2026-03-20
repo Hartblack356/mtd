@@ -57,26 +57,20 @@ jobs:
       - name: Run tests with coverage
         run: uv run pytest -v --tb=short --cov=mtd --cov-report=xml --cov-report=term-missing
 
-      - name: Extract coverage percentage
+      - name: Generate coverage badge
         if: matrix.python-version == '3.14' && github.ref == 'refs/heads/main'
-        id: coverage
         run: |
-          COVERAGE=$(uv run pytest --cov=mtd --cov-report=term -q 2>&1 | grep "^TOTAL" | awk '{print $NF}' | tr -d '%')
-          echo "percentage=$COVERAGE" >> "$GITHUB_OUTPUT"
-          echo "Coverage: $COVERAGE%"
+          uv pip install coverage-badge
+          uv run coverage-badge -o coverage.svg -f
 
-      - name: Update coverage badge
+      - name: Commit coverage badge
         if: matrix.python-version == '3.14' && github.ref == 'refs/heads/main'
-        uses: schneegans/dynamic-badges-action@v1.7.0
-        with:
-          auth: ${{ secrets.GIST_TOKEN }}
-          gistID: ${{ vars.COVERAGE_GIST_ID }}
-          filename: mtd-coverage.json
-          label: coverage
-          message: ${{ steps.coverage.outputs.percentage }}%
-          valColorRange: ${{ steps.coverage.outputs.percentage }}
-          minColorRange: 50
-          maxColorRange: 100
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add coverage.svg
+          git diff --staged --quiet || git commit -m "ci: update coverage badge [skip ci]"
+          git push
 
   security:
     name: Security
