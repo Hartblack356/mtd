@@ -64,7 +64,8 @@ jobs:
           import xml.etree.ElementTree as ET
           tree = ET.parse('coverage.xml')
           rate = float(tree.getroot().attrib['line-rate']) * 100
-          print(f'{rate:.0f}')
+          import math
+          print(f'{math.floor(rate)}')
           ")
           if [ "$COVERAGE" -ge 90 ]; then COLOR="brightgreen"
           elif [ "$COVERAGE" -ge 75 ]; then COLOR="green"
