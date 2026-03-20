@@ -93,6 +93,35 @@ def themes_show(name):
 
 @cli.command()
 @click.option(
+    "-o",
+    "--output",
+    default="template.md",
+    show_default=True,
+    help="Output file name.",
+)
+def init(output):
+    """Copy the example Markdown template to the current directory."""
+    import shutil
+
+    template = Path(__file__).parent.parent / "examples" / "template.md"
+    if not template.exists():
+        # Fallback for installed packages
+        import importlib.resources
+
+        ref = importlib.resources.files("mtd").joinpath("../examples/template.md")
+        template = Path(str(ref))
+
+    dest = Path(output)
+    if dest.exists():
+        click.echo(f"Error: '{dest}' already exists. Use -o to specify another name.", err=True)
+        sys.exit(1)
+
+    shutil.copy2(template, dest)
+    click.echo(f"Created {dest}")
+
+
+@cli.command()
+@click.option(
     "-h",
     "--host",
     default="127.0.0.1",
