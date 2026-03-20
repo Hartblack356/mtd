@@ -1,0 +1,47 @@
+name: academic
+description: Formal. Times New Roman, wide margins, double spacing.
+
+fonts:
+  heading: Times New Roman
+  body: Times New Roman
+  code: Courier New
+
+colors:
+  primary: "#000000"
+  secondary: "#333333"
+  text: "#000000"
+  code_background: "#f0f0f0"
+
+heading:
+  h1:
+    size: 16
+    bold: true
+  h2:
+    size: 14
+    bold: true
+  h3:
+    size: 13
+    bold: true
+    italic: true
+  h4:
+    size: 12
+    bold: true
+
+body:
+  size: 12
+  line_spacing: 2.0
+
+code:
+  size: 10
+
+page:
+  margin_top: "3cm"
+  margin_bottom: "3cm"
+  margin_left: "3cm"
+  margin_right: "3cm"
+
+titlepage:
+  title_size: 24
+  subtitle_size: 18
+  info_size: 14
+  spacing_top: "8cm"

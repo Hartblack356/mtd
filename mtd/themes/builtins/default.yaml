@@ -1,0 +1,37 @@
+name: default
+description: Clean and neutral. Serif body, sans-serif headings.
+
+fonts:
+  heading: Arial
+  body: Calibri
+  code: Courier New
+
+colors:
+  primary: "#2563eb"
+  secondary: "#64748b"
+  text: "#1f2937"
+  code_background: "#f5f5f5"
+
+heading:
+  h1:
+    size: 24
+    bold: true
+  h2:
+    size: 20
+    bold: true
+  h3:
+    size: 16
+    bold: true
+  h4:
+    size: 14
+    bold: true
+
+body:
+  size: 11
+  line_spacing: 1.15
+
+page:
+  margin_top: "2.54cm"
+  margin_bottom: "2.54cm"
+  margin_left: "2.54cm"
+  margin_right: "2.54cm"
