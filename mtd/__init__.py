@@ -11,7 +11,10 @@ Granular usage:
     write_docx(doc, "output.docx", theme)
 """
 
-__version__ = "0.1.0"
+try:
+    from mtd._version import __version__
+except ModuleNotFoundError:  # pragma: no cover
+    __version__ = "0.0.0.dev0"
 
 from mtd.api import convert, convert_string
 from mtd.models import Document

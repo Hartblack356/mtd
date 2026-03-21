@@ -189,3 +189,4 @@ pip-selfcheck.json
 
 # Claude Orchestrator - proprietary, never push
 .claude/
+mtd/_version.py
