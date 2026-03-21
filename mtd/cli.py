@@ -101,15 +101,13 @@ def themes_show(name):
 )
 def init(output):
     """Copy the example Markdown template to the current directory."""
+    import importlib.resources
     import shutil
 
-    template = Path(__file__).parent.parent / "examples" / "template.md"
-    if not template.exists():
-        # Fallback for installed packages
-        import importlib.resources
-
-        ref = importlib.resources.files("mtd").joinpath("../examples/template.md")
-        template = Path(str(ref))
+    template_ref = importlib.resources.files("mtd").joinpath("template.md")
+    template = Path(str(template_ref))
+    if not template.is_file():
+        template = Path(__file__).parent / "template.md"
 
     dest = Path(output)
     if dest.exists():
